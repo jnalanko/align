@@ -1,7 +1,5 @@
 use bio::alignment::pairwise::*;
 
-// UniRef90_A0A379Q2C5
-
 fn main(){
 
     if std::env::args().len() != 3 {
@@ -23,5 +21,5 @@ fn main(){
     let mut aligner = Aligner::with_capacity(x.len(), y.len(), -5, -1, &score);
     let alignment = aligner.global(x, y);
     eprintln!("{}", alignment.pretty(x, y, n_columns));
-
 }
+
