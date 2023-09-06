@@ -6,17 +6,17 @@ fn main(){
     let cli = Command::new("align")
         .arg_required_else_help(true)
         .arg(Arg::new("fasta")
-            .help("Input fasta file")
+            .help("Input fasta file containing the two sequences to align.")
             .required(true)
             .index(1))
         .arg(Arg::new("columns")
-            .help("Number of columns to print")
+            .help("Number of columns to print.")
             .required(true)
             .index(2))
         .arg(Arg::new("global")
             .short('g')
             .long("global")
-            .help("Use global alignment (default is local)")
+            .help("Use global alignment (default is local).")
             .action(ArgAction::SetTrue));
 
     let matches = cli.get_matches();
