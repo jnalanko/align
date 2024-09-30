@@ -27,32 +27,37 @@ fn main(){
     let reader = jseqio::reader::DynamicFastXReader::from_file(&infile).unwrap();
     let db = reader.into_db().unwrap();
 
-    let x = db.get(0).unwrap().seq;
-    let y = db.get(1).unwrap().seq;
+    assert!(db.sequence_count() % 2 == 0);
 
-    let x_rc_vec = x.iter().rev().map(|c| bio::alphabets::dna::complement(*c)).collect::<Vec<_>>();
-    let x_rc = x_rc_vec.as_slice();
+    for pair_idx in 0..(db.sequence_count() / 2) {
+        let x = db.get(2*pair_idx).unwrap().seq;
+        let y = db.get(2*pair_idx + 1).unwrap().seq;
 
-    let score = |a: u8, b: u8| if a == b { 1i32 } else { -1i32 };
-    // gap open score: -5, gap extension score: -1
-    let mut aligner = Aligner::with_capacity(x.len(), y.len(), -5, -1, &score);
+        let x_rc_vec = x.iter().rev().map(|c| bio::alphabets::dna::complement(*c)).collect::<Vec<_>>();
+        let x_rc = x_rc_vec.as_slice();
 
-    let alignment = match global {
-        true => aligner.global(x, y),
-        false => aligner.local(x, y),
-    };
-    let alignment_rc = match global {
-        true => aligner.global(x_rc, y),
-        false => aligner.local(x_rc, y),
-    };
-    
-    if alignment_rc.score > alignment.score {
-        eprintln!("Aligned reverse complement to forward");
-        eprintln!("{}", alignment_rc.pretty(x, y, n_columns));
+        let score = |a: u8, b: u8| if a == b { 1i32 } else { -1i32 };
+        // gap open score: -5, gap extension score: -1
+        let mut aligner = Aligner::with_capacity(x.len(), y.len(), -5, -1, &score);
+
+        let alignment = match global {
+            true => aligner.global(x, y),
+            false => aligner.local(x, y),
+        };
+        let alignment_rc = match global {
+            true => aligner.global(x_rc, y),
+            false => aligner.local(x_rc, y),
+        };
+        
+        if alignment_rc.score > alignment.score {
+            eprintln!("Aligned reverse complement to forward");
+            eprintln!("{}", alignment_rc.pretty(x, y, n_columns));
+        }
+        else {
+            eprintln!("Aligned forward to forward");
+            eprintln!("{}", alignment.pretty(x, y, n_columns));
+        }
     }
-    else {
-        eprintln!("Aligned forward to forward");
-        eprintln!("{}", alignment.pretty(x, y, n_columns));
-    }
+
 }
 
