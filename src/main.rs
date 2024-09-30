@@ -35,7 +35,9 @@ fn main(){
     let reader = jseqio::reader::DynamicFastXReader::from_file(&infile).unwrap();
     let db = reader.into_db().unwrap();
 
-    assert!(db.sequence_count() % 2 == 0);
+    if db.sequence_count() % 2 != 0 {
+        eprintln!("Warning: odd number of sequence in input file. Ignoring the last one");
+    }
 
     for pair_idx in 0..(db.sequence_count() / 2) {
         let x = db.get(2*pair_idx).unwrap().seq;
