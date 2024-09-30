@@ -36,7 +36,7 @@ fn main(){
     let db = reader.into_db().unwrap();
 
     if db.sequence_count() % 2 != 0 {
-        eprintln!("Warning: odd number of sequence in input file. Ignoring the last one");
+        eprintln!("Warning: odd number of sequences in input file. Ignoring the last one.");
     }
 
     for pair_idx in 0..(db.sequence_count() / 2) {
